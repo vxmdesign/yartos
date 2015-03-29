@@ -109,5 +109,6 @@ context:
 depend: $(foreach SDIR, $(INSTALLED_DIRS), $(SDIR)_depend)
 
 clean: $(foreach SDIR, $(INSTALLED_DIRS), $(SDIR)_clean)
+	rm -f $(BIN)
 
 distclean: $(foreach SDIR, $(INSTALLED_DIRS), $(SDIR)_distclean)

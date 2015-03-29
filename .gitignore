@@ -3,5 +3,7 @@
 *.hex
 *~
 .config
+*.a
+System.map
 
 
