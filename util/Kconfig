@@ -1,0 +1,19 @@
+#
+# For a description of the syntax of this configuration file,
+# see misc/tools/kconfig-language.txt.
+#
+
+
+source "util/cle/Kconfig"
+
+source "util/inifile/Kconfig"
+
+source "util/readline/Kconfig"
+
+source "util/netlib/Kconfig"
+
+source "util/init/Kconfig"
+
+source "util/json/Kconfig"
+
+source "util/codecs/Kconfig"

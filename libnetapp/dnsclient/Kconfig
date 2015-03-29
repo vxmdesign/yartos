@@ -1,0 +1,44 @@
+#
+# For a description of the syntax of this configuration file,
+# see misc/tools/kconfig-language.txt.
+#
+
+config LIBNETAPP_DNSCLIENT
+	bool "DNS Name resolution"
+	default n
+	depends on NET && NET_UDP
+	---help---
+		Enable support for the name resolution.
+
+if LIBNETAPP_DNSCLIENT
+
+choice
+	prompt "Internet Protocol"
+	default LIBNETAPP_DNSCLIENT_IPv4 if NET_IPv4
+	default LIBNETAPP_DNSCLIENT_IPv6 if NET_IPv6 && !NET_IPv4
+
+config LIBNETAPP_DNSCLIENT_IPv4
+	bool "IPv4"
+	depends on NET_IPv4
+
+config LIBNETAPP_DNSCLIENT_IPv6
+	bool "IPv6"
+	depends on NET_IPv6
+
+endchoice # Internet Protocol
+
+config LIBNETAPP_DNSCLIENT_ENTRIES
+	int "Number of DNS resolver entries"
+	default 8
+	---help---
+		Number of DNS resolver entries.  Default: 8
+
+config LIBNETAPP_DNSCLIENT_MAXRESPONSE
+	int "Max response size"
+	default 96
+	---help---
+		This setting determines the maximum size of response message that
+		can be received by the DNS resolver.  The default is 96 but may
+		need to be larger on enterprise networks (perhaps 176).
+
+endif # LIBNETAPP_DNSCLIENT

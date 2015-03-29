@@ -1,0 +1,22 @@
+#
+# For a description of the syntax of this configuration file,
+# see misc/tools/kconfig-language.txt.
+#
+
+comment "Networking Utilities"
+
+
+source "libnetapp/dhcpc/Kconfig"
+source "libnetapp/dhcpd/Kconfig"
+source "libnetapp/ftpc/Kconfig"
+source "libnetapp/ftpd/Kconfig"
+source "libnetapp/dnsclient/Kconfig"
+source "libnetapp/smtp/Kconfig"
+source "libnetapp/telnetd/Kconfig"
+source "libnetapp/tftpc/Kconfig"
+source "libnetapp/thttpd/Kconfig"
+source "libnetapp/webclient/Kconfig"
+source "libnetapp/webserver/Kconfig"
+source "libnetapp/ntpclient/Kconfig"
+source "libnetapp/discover/Kconfig"
+source "libnetapp/xmlrpc/Kconfig"
