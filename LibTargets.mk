@@ -136,7 +136,7 @@ lib$(DELIM)libnetapp$(LIBEXT): libnetapp$(DELIM)libnetapp$(LIBEXT)
 	$(Q) install libnetapp$(DELIM)libnetapp$(LIBEXT) lib$(DELIM)libnetapp$(LIBEXT)
 
 libnsh$(DELIM)libnsh$(LIBEXT): context
-	$(Q) $(MAKE) -C libnsh TOPDIR="$(TOPDIR)" libnsh$(LIBEXT)
+	$(Q) $(MAKE) -C libnsh ARCH_SRC="$(ARCH_SRC)" TOPDIR="$(TOPDIR)" libnsh$(LIBEXT)
 
 lib$(DELIM)libuc$(LIBEXT): libc$(DELIM)libuc$(LIBEXT)
 	$(Q) install libc$(DELIM)libuc$(LIBEXT) lib$(DELIM)libuc$(LIBEXT)

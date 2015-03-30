@@ -40,7 +40,7 @@
 
 ASRCS  =
 CSRCS  = nsh_init.c nsh_parse.c nsh_console.c nsh_script.c
-CSRCS += nsh_command.c nsh_fscmds.c nsh_ddcmd.c nsh_proccmds.c nsh_mmcmds.c
+CSRCS += nsh_command.c nsh_fscmds.c nsh_ddcmd.c nsh_proccmds.c nsh_mmcmds.c hello_main.c #added
 CSRCS += nsh_envcmds.c nsh_dbgcmds.c
 
 ifeq ($(CONFIG_NFILE_STREAMS),0)
@@ -114,6 +114,7 @@ OBJS = $(AOBJS) $(COBJS)
 ROOTDEPPATH = --dep-path .
 VPATH =
 
+CFLAGS += -I$(TOPDIR)/$(ARCH_SRC)/stm32/
 # Build targets
 
 all: .built

@@ -416,6 +416,19 @@ static const struct cmdmap_s g_cmdmap[] =
 # endif
 #endif
 
+# ifndef CONFIG_NSH_DISABLE_HELLO
+  { "hello",       cmd_hello,       1, 1, NULL },
+# endif
+
+# ifndef CONFIG_NSH_DISABLE_FPGA_PROG
+  { "fpga_prg",    cmd_fpga_prog,       1, 1, NULL },
+# endif
+
+# ifndef CONFIG_NSH_DISABLE_DUMPGPIO
+  { "dumpgpio",    cmd_dumpgpio,       1, 2, "<pinset>" },
+# endif
+
+
 #ifndef CONFIG_NSH_DISABLE_XD
   { "xd",       cmd_xd,       3, 3, "<hex-address> <byte-count>" },
 #endif

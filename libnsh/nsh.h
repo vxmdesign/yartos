@@ -1025,5 +1025,13 @@ void nsh_usbtrace(void);
       int cmd_urldecode(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv);
 #  endif
 #endif
-
+#  ifndef CONFIG_NSH_DISABLE_HELLO
+		int cmd_hello(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv);
+#  endif
+#  ifndef CONFIG_NSH_DISABLE_FPGA_PROG
+		int cmd_fpga_prog(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv);
+#  endif
+#  ifndef CONFIG_NSH_DISABLE_DUMPGPIO
+		int cmd_dumpgpio(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv);
+#  endif
 #endif /* __APPS_NSHLIB_NSH_H */
