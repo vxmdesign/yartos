@@ -119,24 +119,58 @@ int cmd_hello(FAR struct nsh_vtbl_s *vtbl,int argc, char *argv[])
 	unsigned char byte = 0x00;
 	int ii = 0, jj = 0;  
 	int nbytes = 0;
-	FILE *fp;
-//FPGA Programming
-
-	fp = fopen("/mnt/sdcard/top.bin", "rb");
-
+	bool temp_initb;
+	int fp;
+	stm32_configgpio(INIT_B); 	//input
+	stm32_configgpio(DONE);		//input
+	stm32_configgpio(PROGRAM_B);	//output
+	stm32_configgpio(CCLK);		//output
+	stm32_configgpio(DIN);		//output
+	stm32_configgpio(DOUT);		//input
+			
+	//FPGA Programming
+	//Initial
+	printf("initialize the pins...\n");
+	stm32_gpiowrite(PROGRAM_B, high);
+	stm32_gpiowrite(CCLK, low);
 	stm32_gpiowrite(DIN, low);
+	
+
+	printf("Waiting\n");
+	up_mdelay(100);
+	temp_initb = stm32_gpioread(INIT_B);
+	printf("the status of init b is %d\n",temp_initb);
+	if(temp_initb == 0){
+		printf("this is weird\n");
+		stm32_gpiowrite(PROGRAM_B, low);
+		return 0;
+	}
+
 	stm32_gpiowrite(PROGRAM_B, low);
 	//wait for INIT_B to go low
-	while(high == stm32_gpioread(INIT_B));
+	while(high == stm32_gpioread(INIT_B)){
+		printf("Waiting for INIT_B to go low\n");
+		up_mdelay(10);
+	}
+	printf("It went low!\n");
+
 	stm32_gpiowrite(PROGRAM_B, high);
+	while(low == stm32_gpioread(INIT_B)){
+		printf("Waiting for INIT_B to go high\n");
+		up_mdelay(10);
+	}
+	printf("It went high!\n");
 
-	//get total number of bytes
-	for(nbytes = 0; getc(fp) != EOF; ++nbytes);
 
-	for(jj=0;jj<nbytes;jj++){
-	//get_byte
-		byte = getc(fp);
-		for(ii=0;ii<8;ii++){//little endian
+	printf("Now open file\n");
+	fp =open("/mnt/sdcard/top.bin", O_RDONLY);
+	printf("Opened file\n");
+	printf("starting...\n");
+
+	while(read(fp,&byte ,1) == 1){
+		//get_byte
+		//byte = getc(fp);
+		for(ii=7;ii>=0;ii--){//little endian
 			//set DIN
 			bit = (byte >> ii) & 0x01;
 			stm32_gpiowrite(DIN, bit);
@@ -147,15 +181,19 @@ int cmd_hello(FAR struct nsh_vtbl_s *vtbl,int argc, char *argv[])
 			up_udelay(1);//some delay
 		}
 	}
+	printf("finished writing..\n");
+		stm32_gpiowrite(CCLK, low);		
+		up_udelay(1);//some delay
+		stm32_gpiowrite(CCLK, high);
+		up_udelay(1);//some delay
 	fclose(fp);
+	printf("closed the file\n");
 	while(low == stm32_gpioread(DONE)){
-		//cycle clk
-			stm32_gpiowrite(CCLK, low);		
-			up_udelay(1);//some delay
-			stm32_gpiowrite(CCLK, high);
-			up_udelay(1);//some delay
+		printf("Waiting for DONE pin\n");
+		up_mdelay(10);		
 	}
 	stm32_gpiowrite(DIN, low);
+	printf("I think I am all done\n");
 	
 }
 #  endif
