@@ -191,7 +191,7 @@
 #  define FSMC_BCR_ASYNCWAIT      (1 << 15)  /* Wait signal during asynchronous transfers */
 #endif
 #define FSMC_BCR_CBURSTRW         (1 << 19)  /* Write burst enable */
-
+#define FSMC_BCR_CCLKEN           (1 << 20) 
 #define FSMC_BCR_RSTVALUE         0x000003d2
 
 #define FSMC_BTR_ADDSET_SHIFT     (0)        /* Address setup phase duration */

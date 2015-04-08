@@ -88,6 +88,10 @@ ifeq ($(CONFIG_PM_BUTTONS),y)
 CSRCS += stm32_pm_buttons.c
 endif
 
+ifeq ($(CONFIG_STM32_FSMC_FPGA),y)
+CSRCS += stm32_fpga.c
+endif
+
 ifeq ($(CONFIG_ARCH_IDLE_CUSTOM),y)
 CSRCS += stm32_idle.c
 endif

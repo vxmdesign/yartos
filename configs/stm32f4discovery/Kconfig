@@ -5,6 +5,12 @@
 
 if ARCH_BOARD_STM32F4_DISCOVERY
 
+config STM32_FSMC_FPGA
+       bool "Pluto fpga"
+       default n
+       ---help---
+		Drivers for fpga
+
 config STM32F4DISBB
 	bool "STM32F4DIS-BB base board"
 	default n
