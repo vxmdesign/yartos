@@ -3,7 +3,7 @@
 
 
 
-void up_fpgainitialize();
+void up_fpgainitialize(int);
 void stm32_enablefpga();
 
 

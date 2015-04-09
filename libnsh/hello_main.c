@@ -59,6 +59,8 @@
 #define DIN           (GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_50MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTF|GPIO_PIN4)
 //DOUT			: pin 15 - PF5 - I/P
 #define DOUT          (GPIO_INPUT|GPIO_PUSHPULL|GPIO_SPEED_50MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTF|GPIO_PIN5)
+//FSMC_CLK			: pin 117 - PD3 - O/P
+#define FSMC_CLK          (GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_100MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTD|GPIO_PIN3)
 
 #define low 	false
 #define high 	true
@@ -202,6 +204,37 @@ int cmd_dumpgpio(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv){
 #endif
 
 int cmd_startfsmc(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv){
+	int i = 0;
   stm32_enablefpga();
-  up_fpgainitialize();
+	i = atoi(argv[1]);
+	printf("atoi(argv[1]) = %d\n",i);
+  up_fpgainitialize(i);
+}
+
+int cmd_testfsmcclk(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv){
+	int ii = 0, d = 0;
+	//Setup Pin
+	stm32_configgpio(FSMC_CLK);
+  //Initialize Pin
+  stm32_gpiowrite(FSMC_CLK, high);
+
+	for(ii=0;ii<1000;ii++){
+		stm32_gpiowrite(FSMC_CLK, high);
+		//up_mdelay(1);
+		//d++;
+		stm32_gpiowrite(FSMC_CLK, low);
+		//d++;
+		//up_mdelay(1);
+	}
+	
+	return 0;
+}
+
+int cmd_fsmcwrite(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv){
+	volatile unsigned short *x;
+	x = (unsigned short *) 0x60000000;
+	*x=0xbeef;
+	up_mdelay(1);
+	*x=0xbeef;
+	return 0;
 }
