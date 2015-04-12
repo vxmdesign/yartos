@@ -423,8 +423,9 @@ static const struct cmdmap_s g_cmdmap[] =
 # ifndef CONFIG_NSH_DISABLE_FPGA_PROG
   { "fpga_prg",    cmd_fpga_prog,       1, 1, NULL },
   { "startfsmc", cmd_startfsmc, 1, 2, NULL},
-	{ "test_clk", cmd_testfsmcclk, 1, 1, NULL},
-	{ "fsmc_write", cmd_fsmcwrite, 1, 1, NULL},
+  { "test_clk", cmd_testfsmcclk, 1, 1, NULL},
+  { "fsmc_write", cmd_fsmcwrite, 1, 1, NULL},
+  { "testelf", cmd_testelf, 1, 2, NULL},
 # endif
   
 

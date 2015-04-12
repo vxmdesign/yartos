@@ -66,7 +66,7 @@ static const uint32_t g_psramconfig[] = {
   GPIO_FSMC_A16, GPIO_FSMC_A17, GPIO_FSMC_A18, GPIO_FSMC_A19,
   GPIO_FSMC_A20, GPIO_FSMC_A21, GPIO_FSMC_A22, GPIO_FSMC_A23,
   GPIO_FSMC_A24, GPIO_FSMC_A25, 
-  GPIO_FSMC_NOE, GPIO_FSMC_NWE, GPIO_FSMC_NL, GPIO_FSMC_NWAIT,
+  GPIO_FSMC_NOE, GPIO_FSMC_NWE, GPIO_FSMC_NL,
   GPIO_FSMC_NBL0, GPIO_FSMC_NBL1,
   GPIO_FSMC_NE1, GPIO_FSMC_NE2  
 };
@@ -114,19 +114,19 @@ void stm32_fpgagpios(const uint32_t *gpios, int ngpios){
 
 void up_fpgainitialize(int i){
   stm32_fpgagpios(g_psramconfig, psramconfig_len);
-	uint32_t foo0 = 0x00000000,foo1 = 0x00000000;
-
-	foo0 = FSMC_BCR_PSRAM | FSMC_BCR_MWID16 | FSMC_BCR_CCLKEN | FSMC_BCR_CBURSTRW | FSMC_BCR_WREN  | FSMC_BCR_MUXEN | FSMC_BCR_MBKEN | 0x80;
-	printf("putreg32( 0x%x , STM32_FSMC_BCR1);\n",foo0);
+  uint32_t foo0 = 0x00000000,foo1 = 0x00000000;
+  
+  foo0 = FSMC_BCR_PSRAM | FSMC_BCR_MWID16 | FSMC_BCR_CCLKEN | FSMC_BCR_CBURSTRW | FSMC_BCR_WREN  | FSMC_BCR_MUXEN | FSMC_BCR_MBKEN | FSMC_BCR_BURSTEN | FSMC_BCR_WAITPOL | 0x80;
+  printf("putreg32( 0x%x , STM32_FSMC_BCR1);\n",foo0);
   putreg32( foo0 , STM32_FSMC_BCR1); 
-	foo0 = getreg32( STM32_FSMC_BCR1 );
-	printf("getreg32 = 0x%x\n",foo0);
-
-	foo1 = FSMC_BTR_CLKDIV(i) | FSMC_BTR_ADDHLD(2);
-	printf("putreg32( 0x%x  , STM32_FSMC_BTR1);\n",foo1);
+  foo0 = getreg32( STM32_FSMC_BCR1 );
+  printf("getreg32 = 0x%x\n",foo0);
+  
+  foo1 = FSMC_BTR_CLKDIV(i) | FSMC_BTR_ADDHLD(2);
+  printf("putreg32( 0x%x  , STM32_FSMC_BTR1);\n",foo1);
   putreg32( foo1 , STM32_FSMC_BTR1);
-	foo1 = getreg32( STM32_FSMC_BTR1 );
-	printf("getreg32 = 0x%x\n",foo1);
+  foo1 = getreg32( STM32_FSMC_BTR1 );
+  printf("getreg32 = 0x%x\n",foo1);
   putreg32( 0xffffffff, STM32_FSMC_BWTR1);
 }
 

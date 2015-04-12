@@ -1,5 +1,8 @@
 #include <nuttx/config.h>
 
+#include <nuttx/binfmt/binfmt.h>
+#include <nuttx/binfmt/elf.h>
+#include <nuttx/binfmt/symtab.h>
 #include <sys/types.h>
 #include <stdint.h>
 #include <stdbool.h>
@@ -64,6 +67,9 @@
 
 #define low 	false
 #define high 	true
+
+extern const struct symtab_s exports[];
+extern const int nexports;
 
 #ifndef CONFIG_NSH_DISABLE_HELLO
 int cmd_hello(FAR struct nsh_vtbl_s *vtbl,int argc, char *argv[]) {
@@ -189,7 +195,7 @@ int cmd_fpga_prog(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv){
   }
   stm32_gpiowrite(DIN, low);
   printf("I think I am all done\n");
-  
+  return 0;
 }
 #endif
 
@@ -204,37 +210,60 @@ int cmd_dumpgpio(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv){
 #endif
 
 int cmd_startfsmc(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv){
-	int i = 0;
+  int i = 0;
   stm32_enablefpga();
-	i = atoi(argv[1]);
-	printf("atoi(argv[1]) = %d\n",i);
+  i = atoi(argv[1]);
+  printf("atoi(argv[1]) = %d\n",i);
   up_fpgainitialize(i);
+  return 0;
 }
 
 int cmd_testfsmcclk(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv){
-	int ii = 0, d = 0;
-	//Setup Pin
-	stm32_configgpio(FSMC_CLK);
+  int ii = 0, d = 0;
+  //Setup Pin
+  stm32_configgpio(FSMC_CLK);
   //Initialize Pin
   stm32_gpiowrite(FSMC_CLK, high);
-
-	for(ii=0;ii<1000;ii++){
-		stm32_gpiowrite(FSMC_CLK, high);
-		//up_mdelay(1);
-		//d++;
-		stm32_gpiowrite(FSMC_CLK, low);
-		//d++;
-		//up_mdelay(1);
-	}
-	
-	return 0;
+  
+  for(ii=0;ii<1000;ii++){
+    stm32_gpiowrite(FSMC_CLK, high);
+    //up_mdelay(1);
+    //d++;
+    stm32_gpiowrite(FSMC_CLK, low);
+    //d++;
+    //up_mdelay(1);
+  }
+  
+  return 0;
 }
 
 int cmd_fsmcwrite(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv){
-	volatile unsigned short *x;
-	x = (unsigned short *) 0x60000000;
-	*x=0xbeef;
-	up_mdelay(1);
-	*x=0xbeef;
-	return 0;
+  volatile unsigned short *x;
+  x = (unsigned short *) 0x60000000;
+  *x=0xbeef;
+  up_mdelay(1);
+  *x=0xbeef;
+  return 0;
+}
+
+int cmd_testelf(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv){
+  int ret;
+  struct binary_s bin;
+  ret = elf_initialize();
+  printf("Elf test %s\n", argv[1]);
+  memset(&bin, 0, sizeof(struct binary_s));
+  bin.filename = argv[1];
+  bin.exports = exports;
+  bin.nexports = nexports;
+  ret = load_module(&bin);
+  if(ret < 0){
+    printf("Error could not load module %d\n",ret);
+    return 0;
+  }
+  ret = exec_module(&bin);
+  if(ret < 0){
+    printf("Error could not execute module\n");
+    return 0;
+  }
+  return 0;  
 }
