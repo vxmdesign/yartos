@@ -426,6 +426,7 @@ static const struct cmdmap_s g_cmdmap[] =
   { "test_clk", cmd_testfsmcclk, 1, 1, NULL},
   { "fsmc_write", cmd_fsmcwrite, 1, 1, NULL},
   { "testelf", cmd_testelf, 1, 2, NULL},
+  { "tbltest", cmd_tbltest, 1, 1, NULL},
 # endif
   
 

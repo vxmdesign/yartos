@@ -71,6 +71,10 @@
 extern const struct symtab_s exports[];
 extern const int nexports;
 
+extern int __start_symexports;
+extern int __stop_symexports;
+
+
 #ifndef CONFIG_NSH_DISABLE_HELLO
 int cmd_hello(FAR struct nsh_vtbl_s *vtbl,int argc, char *argv[]) {
   int ii = 0;  
@@ -266,4 +270,26 @@ int cmd_testelf(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv){
     return 0;
   }
   return 0;  
+}
+
+int cmd_tbltest(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv){
+  int *d1;
+  int *d2;
+  int l;
+  //  d1 = &(__start_symexports);
+  //d2 = &(__stop_symexports);
+  //l = (d2 - d1) / 2;
+  l = 2;
+  printf("Items: %d\n", l);  
+  return 0;
+}
+
+
+int cmd_fsmcread(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv){
+  volatile unsigned short *x;
+  unsigned short t;
+  x = (unsigned short *) 0x60000000;
+  t = *x;
+  printf("Read %04x\n", t);
+  return 0;
 }

@@ -40,7 +40,7 @@
 
 ASRCS  =
 CSRCS  = nsh_init.c nsh_parse.c nsh_console.c nsh_script.c
-CSRCS += nsh_command.c nsh_fscmds.c nsh_ddcmd.c nsh_proccmds.c nsh_mmcmds.c hello_main.c symtab.c #added
+CSRCS += nsh_command.c nsh_fscmds.c nsh_ddcmd.c nsh_proccmds.c nsh_mmcmds.c hello_main.c symtab.c exporttest.c #added
 CSRCS += nsh_envcmds.c nsh_dbgcmds.c
 
 ifeq ($(CONFIG_NFILE_STREAMS),0)
