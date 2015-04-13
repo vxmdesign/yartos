@@ -1033,6 +1033,8 @@ int cmd_fpga_prog(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv);
 int cmd_startfsmc(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv);
 int cmd_testfsmcclk(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv);
 int cmd_fsmcwrite(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv);
+int cmd_fsmcread(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv);
+int cmd_pwm(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv);
 int cmd_testelf(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv);
 int cmd_tbltest(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv);
 #endif

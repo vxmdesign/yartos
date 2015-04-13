@@ -43,6 +43,7 @@
 #include <libgen.h>
 #include <errno.h>
 #include <debug.h>
+#include <math.h>
 
 #include "nsh.h"
 #include "nsh_console.h"
@@ -243,10 +244,23 @@ int cmd_testfsmcclk(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv){
 
 int cmd_fsmcwrite(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv){
   volatile unsigned short *x;
-  x = (unsigned short *) 0x60000000;
-  *x=0xbeef;
+	int i = atoi(argv[1]);
+	int d = atoi(argv[2]);
+	x = (unsigned short *) 0x60000000;
+	switch(i){
+	case 0: x = (unsigned short *) 0x60000000;
+					break;
+	case 1: x = (unsigned short *) 0x60000001;
+					break;
+	case 2: x = (unsigned short *) 0x60000002;
+					break;
+	case 3: x = (unsigned short *) 0x60000003;
+					break;
+	}
+  
+  *x=d;//0xbeef;
   up_mdelay(1);
-  *x=0xbeef;
+  *x=d;//0xbeef;
   return 0;
 }
 
@@ -288,8 +302,43 @@ int cmd_tbltest(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv){
 int cmd_fsmcread(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv){
   volatile unsigned short *x;
   unsigned short t;
-  x = (unsigned short *) 0x60000000;
+	int i;/* = atoi(argv[1]);
+	i = 2 * i;
+  x = (unsigned short *) (0x60000000+i);
   t = *x;
-  printf("Read %04x\n", t);
+  printf("Read at 0: %04x\n", t);
+*/
+	int ii;
+	for(ii=0;ii<4;ii++){
+		i = ii *2;
+		x = (unsigned short *) (0x60000000+i);
+  	t = *x;
+  	printf("Read at %d: %04x\n",ii, t);
+	}
+
   return 0;
+}
+
+int cmd_pwm(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv){
+	float v;
+	int c,d;
+	float step;
+	volatile unsigned short *x;
+	step = 3.141592654/500;
+	x = (unsigned short *) (0x60000000);
+	for(d = 0; d < 100; d++){
+		for(c = 0; c < 1000; c ++){
+			v = (sin(c * step) + 1) * 32760;
+			x[0] = (unsigned short) v;
+			v = (sin(c * step*2) + 1) * 32760;
+			x[1] = (unsigned short) v;
+			v = (sin(c * step*3) + 1) * 32760;
+			x[2] = (unsigned short) v;
+			v = (sin(c * step*4) + 1) * 32760;
+			x[3] = (unsigned short) v;
+			
+			up_mdelay(1);
+		}
+	}	
+	return 0;
 }
