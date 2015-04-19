@@ -1035,6 +1035,8 @@ int cmd_testfsmcclk(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv);
 int cmd_fsmcwrite(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv);
 int cmd_testelf(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv);
 int cmd_tbltest(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv);
+//int cmd_symtest(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv);
+
 #endif
 #ifndef CONFIG_NSH_DISABLE_DUMPGPIO
 		int cmd_dumpgpio(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv);

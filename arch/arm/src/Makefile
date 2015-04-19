@@ -87,6 +87,10 @@ endif
 HEAD_OBJ = $(HEAD_ASRC:.S=$(OBJEXT))
 STARTUP_OBJS ?= $(HEAD_OBJ)
 
+SYMEXP_OBJS = $(SYMEXP_CSRC:.c=$(OBJEXT))
+
+#EXTRA_OBJS = $(EXTRA_CSRC)
+
 # Flat build or kernel-mode objects
 
 ASRCS = $(CHIP_ASRCS) $(CMN_ASRCS)
@@ -155,14 +159,14 @@ VPATH += chip
 VPATH += common
 VPATH += $(ARCH_SUBDIR)
 
-all: $(HEAD_OBJ) $(BIN)
+all: $(HEAD_OBJ) $(SYMEXP_OBJS) $(BIN)
 
 .PHONY: board/libboard$(LIBEXT)
 
 $(AOBJS) $(UAOBJS) $(HEAD_OBJ): %$(OBJEXT): %.S
 	$(call ASSEMBLE, $<, $@)
 
-$(COBJS) $(UCOBJS): %$(OBJEXT): %.c
+$(COBJS) $(UCOBJS) $(SYMEXP_OBJS): %$(OBJEXT): %.c
 	$(call COMPILE, $<, $@)
 
 $(BIN) $(KBIN): $(OBJS)
@@ -171,13 +175,13 @@ $(BIN) $(KBIN): $(OBJS)
 $(UBIN): $(UOBJS)
 	$(call ARCHIVE, $@, $(UOBJS))
 
-board/libboard$(LIBEXT): $(HEAD_OBJ)
+board/libboard$(LIBEXT): $(HEAD_OBJ) $(SYMEXP_OBJS)
 	$(Q) $(MAKE) -C board TOPDIR="$(TOPDIR)" libboard$(LIBEXT) EXTRADEFINES=$(EXTRADEFINES)
 
 nuttx$(EXEEXT):  board/libboard$(LIBEXT)
 	$(Q) echo "LD: nuttx"
 	$(Q) $(LD) --entry=__start $(LDFLAGS) $(LIBPATHS) $(EXTRA_LIBPATHS) \
-		-o $(NUTTX) $(HEAD_OBJ) $(EXTRA_OBJS) \
+		-o $(NUTTX) $(HEAD_OBJ) $(EXTRA_OBJS) $(SYMEXP_OBJS) \
 		--start-group $(LDLIBS) $(EXTRA_LIBS) $(LIBGCC) --end-group
 ifneq ($(CONFIG_WINDOWS_NATIVE),y)
 	$(Q) $(NM) $(NUTTX) | \

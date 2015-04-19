@@ -68,11 +68,11 @@
 #define low 	false
 #define high 	true
 
-extern const struct symtab_s exports[];
-extern const int nexports;
+//extern const struct symtab_s exports[];
+//extern const int nexports;
 
-extern int __start_symexports;
-extern int __stop_symexports;
+extern unsigned int __start_symtab;
+extern unsigned int __stop_symtab;
 
 
 #ifndef CONFIG_NSH_DISABLE_HELLO
@@ -249,22 +249,25 @@ int cmd_fsmcwrite(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv){
   *x=0xbeef;
   return 0;
 }
-
+struct binary_s bin_te;
 int cmd_testelf(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv){
   int ret;
-  struct binary_s bin;
+
   ret = elf_initialize();
   printf("Elf test %s\n", argv[1]);
-  memset(&bin, 0, sizeof(struct binary_s));
-  bin.filename = argv[1];
-  bin.exports = exports;
-  bin.nexports = nexports;
-  ret = load_module(&bin);
+  memset(&bin_te, 0, sizeof(struct binary_s));
+  bin_te.filename = argv[1];
+  //bin.exports = exports;
+  // bin.nexports = nexports;
+
+  ret = load_module(&bin_te);
+
   if(ret < 0){
     printf("Error could not load module %d\n",ret);
     return 0;
   }
-  ret = exec_module(&bin);
+
+  ret = exec_module(&bin_te);
   if(ret < 0){
     printf("Error could not execute module\n");
     return 0;
@@ -276,11 +279,23 @@ int cmd_tbltest(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv){
   int *d1;
   int *d2;
   int l;
-  //  d1 = &(__start_symexports);
-  //d2 = &(__stop_symexports);
-  //l = (d2 - d1) / 2;
-  l = 2;
+  int c;
+  void *ref;
+  struct symtab_s *st;
+  d1 = &(__start_symtab);
+  d2 = &(__stop_symtab);
+  l = ((d2 - d1) * 4) / sizeof(struct symtab_s);
   printf("Items: %d\n", l);  
+  printf("addr %08x\n", (unsigned long) d1);
+  st = (struct symtab_s *)d1;
+  ref = &printf;
+  printf("Ref: %08x\n", (unsigned long)ref);
+  //printf("Symbol: %s\n", st[0].sym_name);
+  for(c = 0; c < l; c++){
+    printf("Symbol: %s at %08x\n", st[c].sym_name, st[c].sym_value);
+  }
+  //l = 2;
+  
   return 0;
 }
 

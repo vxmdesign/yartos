@@ -93,6 +93,9 @@ SECTIONS
 	.data : {
 		_sdata = ABSOLUTE(.);
 		*(.data .data.*)
+		__start_symtab = ABSOLUTE(.);
+		KEEP(*(symtab))
+		__stop_symtab = ABSOLUTE(.);
 		*(.gnu.linkonce.d.*)
 		CONSTRUCTORS
 		_edata = ABSOLUTE(.);
