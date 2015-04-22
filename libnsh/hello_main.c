@@ -4,6 +4,7 @@
 #include <nuttx/binfmt/elf.h>
 #include <nuttx/binfmt/symtab.h>
 #include <sys/types.h>
+#include <sys/wait.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include "../arch/arm/src/stm32/stm32_gpio.h"
@@ -252,7 +253,7 @@ int cmd_fsmcwrite(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv){
 struct binary_s bin_te;
 int cmd_testelf(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv){
   int ret;
-
+  int prgret;
   ret = elf_initialize();
   printf("Elf test %s\n", argv[1]);
   memset(&bin_te, 0, sizeof(struct binary_s));
@@ -267,11 +268,13 @@ int cmd_testelf(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv){
     return 0;
   }
 
-  ret = exec_module(&bin_te);
+  ret = exec_module(&bin_te);  
   if(ret < 0){
     printf("Error could not execute module\n");
     return 0;
   }
+  waitpid(ret, &prgret, 0);
+  unload_module(&bin_te);
   return 0;  
 }
 
