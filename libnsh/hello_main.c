@@ -5,6 +5,7 @@
 #include <nuttx/binfmt/symtab.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <sys/mount.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include "../arch/arm/src/stm32/stm32_gpio.h"
@@ -311,3 +312,4 @@ int cmd_fsmcread(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv){
   printf("Read %04x\n", t);
   return 0;
 }
+

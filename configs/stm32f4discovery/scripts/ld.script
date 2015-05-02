@@ -96,6 +96,9 @@ SECTIONS
 		__start_symtab = ABSOLUTE(.);
 		KEEP(*(symtab))
 		__stop_symtab = ABSOLUTE(.);
+		__start_romfs = ABSOLUTE(.);
+		KEEP(*(romfs))
+		__stop_romfs = ABSOLUTE(.);
 		*(.gnu.linkonce.d.*)
 		CONSTRUCTORS
 		_edata = ABSOLUTE(.);
