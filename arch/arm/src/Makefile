@@ -84,8 +84,18 @@ endif
 
 # The "head" object
 
+ifneq ($(ROMFS),"")
+ifneq ("$(wildcard $(ROMFS))","")
+ROMFS_OBJ = romfs.o
+endif
+endif
+
 HEAD_OBJ = $(HEAD_ASRC:.S=$(OBJEXT))
 STARTUP_OBJS ?= $(HEAD_OBJ)
+
+SYMEXP_OBJS = $(SYMEXP_CSRC:.c=$(OBJEXT))
+
+#EXTRA_OBJS = $(EXTRA_CSRC)
 
 # Flat build or kernel-mode objects
 
@@ -155,15 +165,20 @@ VPATH += chip
 VPATH += common
 VPATH += $(ARCH_SUBDIR)
 
-all: $(HEAD_OBJ) $(BIN)
+all: $(HEAD_OBJ) $(SYMEXP_OBJS) $(BIN)
 
 .PHONY: board/libboard$(LIBEXT)
 
 $(AOBJS) $(UAOBJS) $(HEAD_OBJ): %$(OBJEXT): %.S
 	$(call ASSEMBLE, $<, $@)
 
-$(COBJS) $(UCOBJS): %$(OBJEXT): %.c
+$(COBJS) $(UCOBJS) $(SYMEXP_OBJS): %$(OBJEXT): %.c
 	$(call COMPILE, $<, $@)
+
+$(ROMFS_OBJ): $(ROMFS) $(HEAD_OBJ)
+	$(Q) $(OBJCOPY) -j .ARM.attributes $(HEAD_OBJ) tmp.o
+	$(Q) $(OBJCOPY) --add-section romfs=$(ROMFS) --set-section-flags romfs=alloc,data,readonly tmp.o $(ROMFS_OBJ)
+	rm tmp.o
 
 $(BIN) $(KBIN): $(OBJS)
 	$(call ARCHIVE, $@, $(OBJS))
@@ -171,13 +186,13 @@ $(BIN) $(KBIN): $(OBJS)
 $(UBIN): $(UOBJS)
 	$(call ARCHIVE, $@, $(UOBJS))
 
-board/libboard$(LIBEXT): $(HEAD_OBJ)
+board/libboard$(LIBEXT): $(HEAD_OBJ) $(SYMEXP_OBJS) $(ROMFS_OBJ)
 	$(Q) $(MAKE) -C board TOPDIR="$(TOPDIR)" libboard$(LIBEXT) EXTRADEFINES=$(EXTRADEFINES)
 
 nuttx$(EXEEXT):  board/libboard$(LIBEXT)
 	$(Q) echo "LD: nuttx"
 	$(Q) $(LD) --entry=__start $(LDFLAGS) $(LIBPATHS) $(EXTRA_LIBPATHS) \
-		-o $(NUTTX) $(HEAD_OBJ) $(EXTRA_OBJS) \
+		-o $(NUTTX) $(HEAD_OBJ) $(EXTRA_OBJS) $(SYMEXP_OBJS) $(ROMFS_OBJ) \
 		--start-group $(LDLIBS) $(EXTRA_LIBS) $(LIBGCC) --end-group
 ifneq ($(CONFIG_WINDOWS_NATIVE),y)
 	$(Q) $(NM) $(NUTTX) | \

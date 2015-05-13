@@ -45,7 +45,8 @@
 /****************************************************************************
  * Pre-processor Definitions
  ****************************************************************************/
-
+#define SYM_TAB_EXPORT_STRUCT __attribute__ ((aligned(4),section("symtab"),used))
+#define EXPORT_SYMBOL(sym) const struct symtab_s __sym_export_##sym SYM_TAB_EXPORT_STRUCT = {#sym, (void*)&sym}
 /****************************************************************************
  * Public Types
  ****************************************************************************/

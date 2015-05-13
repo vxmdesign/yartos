@@ -43,4 +43,6 @@ nsh_main.o: nsh_main.c \
  /home/elenappli/thirdshift/yartos/include/nuttx/addrenv.h \
  /home/elenappli/thirdshift/yartos/include/errno.h \
  /home/elenappli/thirdshift/yartos/include/nuttx/arch.h \
+ /home/elenappli/thirdshift/yartos/include/sys/mount.h \
+ /home/elenappli/thirdshift/yartos/include/nuttx/fs/ramdisk.h \
  /home/elenappli/thirdshift/yartos/include/apps/nsh.h

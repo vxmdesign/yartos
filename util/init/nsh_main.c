@@ -46,6 +46,8 @@
 #include <errno.h>
 
 #include <nuttx/arch.h>
+#include <sys/mount.h>
+#include <nuttx/fs/ramdisk.h>
 
 #if defined(CONFIG_FS_BINFS) && (CONFIG_BUILTIN)
 #  include <nuttx/binfmt/builtin.h>
@@ -88,6 +90,11 @@
 /****************************************************************************
  * Public Data
  ****************************************************************************/
+#define SECTORSIZE 512
+#define NSECTORS(b) (((b)+SECTORSIZE - 1)/SECTORSIZE)
+
+extern unsigned int __start_romfs;
+extern unsigned int __stop_romfs;
 
 /* If posix_spawn() is enabled as required for CONFIG_NSH_FILE_APPS, then
  * a symbol table is needed by the internals of posix_spawn().  The symbol
@@ -124,6 +131,12 @@ int nsh_main(int argc, char *argv[])
 {
   int exitval = 0;
   int ret;
+  int len;
+  FAR uint8_t *imgptr;
+  FAR uint8_t *imgptr_end;
+  imgptr = (FAR uint8_t*) &__start_romfs;
+  imgptr_end = (FAR uint8_t*) &__stop_romfs;
+  len = imgptr_end - imgptr;
 
   /* Call all C++ static constructors */
 
@@ -168,7 +181,18 @@ int nsh_main(int argc, char *argv[])
      exitval = 1;
    }
 #endif
-
+  if(len > 0){
+    printf("mounting romfs\n");
+    ret = romdisk_register(0, (FAR uint8_t *) imgptr, NSECTORS(len), SECTORSIZE);
+    if(ret < 0){
+      printf("romdisk failed to register\n");
+    }else{
+      ret = mount("/dev/ram0", "/mnt/romfs", "romfs", MS_RDONLY, NULL);
+      if(ret < 0){
+	printf("mount failed\n");
+      }
+    }
+  }
   /* If the serial console front end is selected, then run it on this thread */
 
 #ifdef CONFIG_NSH_CONSOLE

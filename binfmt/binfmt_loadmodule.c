@@ -45,7 +45,7 @@
 
 #include <nuttx/kmalloc.h>
 #include <nuttx/binfmt/binfmt.h>
-
+#include <nuttx/binfmt/symtab.h>
 #include "binfmt_internal.h"
 
 #ifndef CONFIG_BINFMT_DISABLE
@@ -155,7 +155,19 @@ static int load_absmodule(FAR struct binary_s *bin)
   sched_unlock();
   return ret;
 }
+extern unsigned int __start_symtab;
+extern unsigned int __stop_symtab;
 
+void fixup_symbol_exports(FAR struct binary_s *bin){
+  unsigned int *d1;
+  unsigned int *d2;
+  int n;
+  d1 = &(__start_symtab);
+  d2 = &(__stop_symtab);
+  n = ((d2 - d1) * 4) / sizeof(struct symtab_s);
+  bin->exports = (struct symtab_s *)d1;
+  bin->nexports = n;
+}
 /****************************************************************************
  * Public Functions
  ****************************************************************************/
@@ -185,7 +197,7 @@ int load_module(FAR struct binary_s *bin)
 #endif
     {
       /* Set the default priority of the new program. */
-
+      fixup_symbol_exports(bin);
       ret = load_default_priority(bin);
       if (ret < 0)
         {

@@ -894,7 +894,7 @@ menu "IP Address Configuration"
 config NSH_DHCPC
 	bool "Use DHCP to get IP address"
 	default n
-	depends on NETUTILS_DHCPC
+	depends on LIBNETAPP_DHCPC
 	---help---
 		Obtain the IP address via DHCP.
 

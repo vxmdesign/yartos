@@ -39,6 +39,8 @@ else
 HEAD_ASRC = stm32_vectors.S
 endif
 
+SYMEXP_CSRC = symtab.c
+
 CMN_UASRCS =
 CMN_UCSRCS =
 

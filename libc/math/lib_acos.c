@@ -33,7 +33,7 @@
 #include <nuttx/compiler.h>
 
 #include <math.h>
-
+#include <export.h>
 /************************************************************************
  * Public Functions
  ************************************************************************/
@@ -43,4 +43,5 @@ double acos(double x)
 {
   return (M_PI_2 - asin(x));
 }
+EXPORT_SYMBOL(acos);
 #endif

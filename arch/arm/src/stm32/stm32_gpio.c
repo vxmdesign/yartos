@@ -54,6 +54,8 @@
 #include "chip.h"
 #include "stm32_gpio.h"
 
+#include <nuttx/binfmt/symtab.h>
+
 #if defined(CONFIG_STM32_STM32L15XX) || defined(CONFIG_STM32_STM32F20XX) || \
     defined(CONFIG_STM32_STM32F30XX) || defined(CONFIG_STM32_STM32F40XX)
 #  include "chip/stm32_syscfg.h"
@@ -651,6 +653,8 @@ int stm32_configgpio(uint32_t cfgset)
   return OK;
 }
 #endif
+
+EXPORT_SYMBOL(stm32_configgpio);
 
 /****************************************************************************
  * Name: stm32_unconfiggpio
