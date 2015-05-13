@@ -65,6 +65,10 @@
 #define DOUT          (GPIO_INPUT|GPIO_PUSHPULL|GPIO_SPEED_50MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTF|GPIO_PIN5)
 //FSMC_CLK			: pin 117 - PD3 - O/P
 #define FSMC_CLK          (GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_100MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTD|GPIO_PIN3)
+//FPGA_INTR0		: pin  46 -PB0 - I/P
+#define FPGA_INTR0 		(GPIO_INPUT|GPIO_SPEED_50MHz|GPIO_PORTB|GPIO_PIN0)
+
+
 
 #define low 	false
 #define high 	true
@@ -192,7 +196,7 @@ int cmd_fpga_prog(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv){
   up_udelay(1);//some delay
   stm32_gpiowrite(CCLK, high);
   up_udelay(1);//some delay
-  fclose(fp);
+  close(fp);
   printf("closed the file\n");
   while(low == stm32_gpioread(DONE)){
     printf("Waiting for DONE pin\n");
@@ -247,22 +251,33 @@ int cmd_fsmcwrite(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv){
 	int i = atoi(argv[1]);
 	int d = atoi(argv[2]);
 	x = (unsigned short *) 0x60000000;
-	switch(i){
-	case 0: x = (unsigned short *) 0x60000000;
-					break;
-	case 1: x = (unsigned short *) 0x60000001;
-					break;
-	case 2: x = (unsigned short *) 0x60000002;
-					break;
-	case 3: x = (unsigned short *) 0x60000003;
-					break;
-	}
-  
-  *x=d;//0xbeef;
-  up_mdelay(1);
-  *x=d;//0xbeef;
+  x[i]=d;//0xbeef;
+	printf("x[%d] = %d, %d\n",i,x[i],d);
   return 0;
 }
+
+int cmd_ledswrite(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv){
+  volatile unsigned short *x;
+	int ii = 0;
+	int r = atoi(argv[1]);
+	int g = atoi(argv[2]);
+	int b = atoi(argv[3]);
+	x = (unsigned short *) 0x60000000;
+	for(ii=0;ii<32;ii++){
+			x[3*ii] = r;
+			x[(3*ii)+1] = g;
+			x[(3*ii)+2] = b;
+	}
+	x[96] = 0;
+	printf("x[97] = %d\n",x[97]);
+	up_mdelay(500);
+	printf("x[97] = %d\n",x[97]);
+	
+
+  return 0;
+}
+
+
 
 int cmd_testelf(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv){
   int ret;
@@ -302,14 +317,14 @@ int cmd_tbltest(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv){
 int cmd_fsmcread(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv){
   volatile unsigned short *x;
   unsigned short t;
-	int i;/* = atoi(argv[1]);
-	i = 2 * i;
-  x = (unsigned short *) (0x60000000+i);
-  t = *x;
-  printf("Read at 0: %04x\n", t);
-*/
+	int i;// = atoi(argv[1]);
+//	i = 2 * i;
+//  x = (unsigned short *) (0x60000000+i);
+//  t = *x;
+//  printf("Read at 0: %04x\n", t);
+
 	int ii;
-	for(ii=0;ii<4;ii++){
+	for(ii=0;ii<(32);ii++){
 		i = ii *2;
 		x = (unsigned short *) (0x60000000+i);
   	t = *x;
@@ -342,3 +357,114 @@ int cmd_pwm(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv){
 	}	
 	return 0;
 }
+
+int cmd_mem_test(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv){	
+	int ii = 0, jj = 0, n = 0;
+	unsigned short t;
+	volatile unsigned short *x;
+	x = (unsigned short *) (0x60000000);
+	//write
+	for(ii=0;ii<32;ii++){
+		if((ii%2) == 0){
+			x[ii]=5;
+		}else{
+			x[ii]=10;
+		}
+	}
+	//read
+	for(ii=0;ii<32;ii++){
+			n = ii *2;
+			x = (unsigned short *) (0x60000000+n);
+			t = *x;
+			if((ii%2) == 0){
+				if(t == 5){
+					jj++;
+				}else{
+					printf("seems to be and error here\n");
+				}
+			}else{
+				if(t == 10){
+					jj++;
+				}else{
+					printf("seems to be and error here\n");
+				}
+			}
+	}
+	if(jj == 32){
+		printf("Memory test 5's and A's was a success!!\n");
+	}
+	//write all 0
+	for(ii=0;ii<32;ii++){
+		x[ii]=0;
+	}
+	jj = 0;
+	for(ii=0;ii<32;ii++){
+		n = ii *2;
+		x = (unsigned short *) (0x60000000+n);
+		t = *x;
+		if(t == 0){
+			jj++;
+		}else{
+			printf("seems to be and error there\n");
+		}	
+	}
+	if(jj == 32){
+		printf("Memory test write all 0's was a success!!\n");
+	}
+
+	//write all 1
+	for(ii=0;ii<32;ii++){
+		x[ii]=1;
+	}
+	jj = 0;
+	for(ii=0;ii<32;ii++){
+		n = ii *2;
+		x = (unsigned short *) (0x60000000+n);
+		t = *x;
+		if(t == 1){
+			jj++;
+		}else{
+			printf("seems to be and error where\n");
+		}	
+	}
+	if(jj == 32){
+		printf("Memory test write all 1's was a success!!\n");
+	}
+
+	//write all 0 again
+	for(ii=0;ii<32;ii++){
+		x[ii]=0;
+	}
+	jj = 0;
+	for(ii=0;ii<32;ii++){
+		n = ii *2;
+		x = (unsigned short *) (0x60000000+n);
+		t = *x;
+		if(t == 0){
+			jj++;
+		}else{
+			printf("seems to be and error ere\n");
+		}	
+	}
+	if(jj == 32){
+		printf("Memory test write all 0's  again was a success!!\n");
+	}
+	return 0;
+}
+
+static int int_test(int irq,void* context){
+	//printf("Test\n");
+	volatile unsigned short *x;
+	x = (unsigned short *) (0x60000000);
+	x[0] = 55;
+	return 0;
+}
+
+int cmd_config_int(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv){
+	//Setup Pin
+  stm32_configgpio(FPGA_INTR0);
+	stm32_gpiosetevent(FPGA_INTR0,true,true,true,int_test);
+
+	return 0;
+}
+

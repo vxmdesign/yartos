@@ -424,11 +424,14 @@ static const struct cmdmap_s g_cmdmap[] =
   { "fpga_prg",    cmd_fpga_prog,       1, 1, NULL },
   { "startfsmc", cmd_startfsmc, 1, 2, NULL},
   { "test_clk", cmd_testfsmcclk, 1, 1, NULL},
-  { "fsmc_write", cmd_fsmcwrite, 1, 3, NULL},
+  { "fw", cmd_fsmcwrite, 1, 3, NULL},
+	{ "leds", cmd_ledswrite, 1, 4, NULL},
 	{ "fsmc_read", cmd_fsmcread, 1, 2, NULL},
-	{ "pwm", cmd_pwm, 1, 1, NULL},
+	//{ "pwm", cmd_pwm, 1, 1, NULL},
   { "testelf", cmd_testelf, 1, 2, NULL},
   { "tbltest", cmd_tbltest, 1, 1, NULL},
+  { "config_int", cmd_config_int, 1, 1, NULL},
+	//{ "mem_test", cmd_mem_test, 1, 1, NULL},
 # endif
   
 

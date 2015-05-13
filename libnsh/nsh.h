@@ -1033,10 +1033,13 @@ int cmd_fpga_prog(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv);
 int cmd_startfsmc(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv);
 int cmd_testfsmcclk(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv);
 int cmd_fsmcwrite(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv);
+int cmd_ledswrite(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv);
 int cmd_fsmcread(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv);
 int cmd_pwm(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv);
 int cmd_testelf(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv);
 int cmd_tbltest(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv);
+int cmd_mem_test(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv);
+int cmd_config_int(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv);
 #endif
 #ifndef CONFIG_NSH_DISABLE_DUMPGPIO
 		int cmd_dumpgpio(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv);
