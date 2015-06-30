@@ -43,7 +43,7 @@ CSRCS  = nsh_init.c nsh_parse.c nsh_console.c nsh_script.c
 CSRCS += nsh_command.c nsh_fscmds.c nsh_ddcmd.c nsh_proccmds.c nsh_mmcmds.c 
 CSRCS += nsh_envcmds.c nsh_dbgcmds.c
 
-ifeq ($(CONFIG_STM32_FSMC_FPGA),y)
+ifeq ($(CONFIG_STM32F4PLUTO),y)
 CSRCS += hello_main.c
 endif
 

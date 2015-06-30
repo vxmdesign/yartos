@@ -475,7 +475,7 @@ CONFIG_NSH_DHCPC=y
 # Board-Specific Options
 #
 CONFIG_STM32F4DISBB=y
-
+CONFIG_STM32F4PLUTO=y
 #
 # RTOS Features
 #

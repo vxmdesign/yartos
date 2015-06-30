@@ -478,6 +478,7 @@ CONFIG_NSH_MMCSDSLOTNO=0
 # Board-Specific Options
 #
 CONFIG_STM32F4DISBB=y
+#CONFIG_STM32F4PLUTO=y
 
 #
 # RTOS Features
@@ -1111,6 +1112,9 @@ CONFIG_LIBNETAPP_DNSCLIENT_MAXRESPONSE=96
 # CONFIG_LIBNETAPP_NTPCLIENT is not set
 # CONFIG_LIBNETAPP_DISCOVER is not set
 # CONFIG_LIBNETAPP_XMLRPC is not set
+
+# Application configuration
+
 
 # Application configuration
 

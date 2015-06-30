@@ -59,10 +59,13 @@
 
 /* Card detections requires card support and a card detection GPIO */
 
-//#define HAVE_NCD   1
-#if !defined(HAVE_SDIO) || !defined(GPIO_SDIO_NCD)
-#  undef HAVE_NCD
+
+#define HAVE_NCD   1
+#if !defined(HAVE_SDIO) || !defined(GPIO_SDIO_NCD) || defined(CONFIG_STM32F4PLUTO)
+#undef HAVE_NCD
 #endif
+
+
 
 /****************************************************************************
  * Private Data
