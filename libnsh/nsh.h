@@ -1031,6 +1031,7 @@ void nsh_usbtrace(void);
 #ifndef CONFIG_NSH_DISABLE_FPGA_PROG
 int cmd_fpga_prog(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv);
 int cmd_startfsmc(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv);
+int cmd_setdatlat(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv);
 int cmd_testfsmcclk(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv);
 int cmd_fsmcwrite(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv);
 int cmd_ledswrite(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv);

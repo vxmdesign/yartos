@@ -335,19 +335,19 @@ int cmd_tbltest(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv){
 int cmd_fsmcread(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv){
   volatile unsigned short *x;
   unsigned short t;
-	int i;// = atoi(argv[1]);
-//	i = 2 * i;
-//  x = (unsigned short *) (0x60000000+i);
-//  t = *x;
-//  printf("Read at 0: %04x\n", t);
+	int i = atoi(argv[1]);
+	i = 2 * i;
+  x = (unsigned short *) (0x60000000+i);
+  t = *x;
+  printf("Read at 0: %04x\n", t);
 
-	int ii;
-	for(ii=0;ii<(32);ii++){
-		i = ii *2;
-		x = (unsigned short *) (0x60000000+i);
-  	t = *x;
-  	printf("Read at %d: %04x\n",ii, t);
-	}
+  //int ii;
+		//	for(ii=0;ii<(32);ii++){
+	//	i = ii *2;
+	//	x = (unsigned short *) (0x60000000+i);
+	//  	t = *x;
+	//  	printf("Read at %d: %04x\n",ii, t);
+	//}
 
   return 0;
 }
@@ -486,3 +486,10 @@ int cmd_config_int(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv){
 	return 0;
 }
 
+
+int cmd_setdatlat(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv){
+  int i;
+  i = atoi(argv[1]);
+  set_fsmcdatlat(i);
+  return 0;
+}

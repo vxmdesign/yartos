@@ -3,7 +3,8 @@
 
 
 
-void up_fpgainitialize(int);
+void set_fsmcdatlat(int i);
+void up_fpgainitialize(int i);
 void stm32_enablefpga();
 
 

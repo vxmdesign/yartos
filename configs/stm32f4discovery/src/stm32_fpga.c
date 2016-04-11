@@ -122,12 +122,26 @@ void up_fpgainitialize(int i){
   foo0 = getreg32( STM32_FSMC_BCR1 );
   printf("getreg32 = 0x%x\n",foo0);
   
-  foo1 = FSMC_BTR_CLKDIV(i) | FSMC_BTR_ADDHLD(2) | FSMC_BTR_DATLAT(4);
+  foo1 = FSMC_BTR_CLKDIV(i) | FSMC_BTR_ADDHLD(2) | FSMC_BTR_DATLAT(2);
   printf("putreg32( 0x%x  , STM32_FSMC_BTR1);\n",foo1);
   putreg32( foo1 , STM32_FSMC_BTR1);
   foo1 = getreg32( STM32_FSMC_BTR1 );
   printf("getreg32 = 0x%x\n",foo1);
   putreg32( 0xffffffff, STM32_FSMC_BWTR1);
+}
+
+void set_fsmcdatlat(int i){
+  unsigned int foo1;
+  foo1 = getreg32(STM32_FSMC_BTR1);
+  foo1 = foo1 & ~FSMC_BTR_DATLAT_MASK;
+  if(i < 2){
+    i = 2;
+  }
+  if(i > 17){
+    i = 17;
+  }
+  foo1 |= FSMC_BTR_DATLAT(i);
+  putreg32(foo1, STM32_FSMC_BTR1);
 }
 
 void stm32_enablefpga(void){
