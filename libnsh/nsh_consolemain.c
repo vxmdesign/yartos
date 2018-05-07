@@ -107,7 +107,7 @@ int nsh_consolemain(int argc, char *argv[])
 
   /* Execute the start-up script */
 
-#ifdef CONFIG_NSH_ROMFSETC
+#if defined(CONFIG_NSH_ROMFSETC) || defined(CONFIG_NSH_EXTINIT)
   (void)nsh_initscript(&pstate->cn_vtbl);
 #endif
 

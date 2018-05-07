@@ -96,6 +96,19 @@
 extern unsigned int __start_romfs;
 extern unsigned int __stop_romfs;
 
+typedef struct {
+  const char *dev;
+  const char *mnt;
+  const char *fstype;
+  int flags;
+} fs_table_entry;
+
+fs_table_entry fstab[] = {
+  {"/dev/ram0", "/mnt/romfs", "romfs", MS_RDONLY},
+  {"/dev/mmcsd0", "/mnt/sdcard", "vfat", MS_RDONLY},
+  {NULL, NULL,  NULL, 0}
+};
+
 /* If posix_spawn() is enabled as required for CONFIG_NSH_FILE_APPS, then
  * a symbol table is needed by the internals of posix_spawn().  The symbol
  * table is needed to support ELF and NXFLAT binaries to dynamically link to
@@ -122,6 +135,26 @@ const struct symtab_s CONFIG_EXECFUNCS_SYMTAB[1];
 /****************************************************************************
  * Name: nsh_main
  ****************************************************************************/
+void fs_mounter(){
+  struct stat st;
+  int c;
+  int ret;
+  int n;
+  c = 0;
+  while(fstab[c].dev != NULL){
+    n = stat(fstab[c].dev, &st);
+    if(n < 0){
+      fprintf(stderr, "No device %s to mount\n", fstab[c].dev);      
+    }else{
+      ret = mount(fstab[c].dev, fstab[c].mnt, fstab[c].fstype, fstab[c].flags, NULL);
+      if(ret < 0){
+	fprintf(stderr, "Could not mount %s\n", fstab[c].dev);      
+      }
+    }
+    c++;
+  }
+  
+}
 
 #ifdef CONFIG_BUILD_KERNEL
 int main(int argc, FAR char *argv[])
@@ -133,7 +166,7 @@ int nsh_main(int argc, char *argv[])
   int ret;
   int len;
   FAR uint8_t *imgptr;
-  FAR uint8_t *imgptr_end;
+  FAR uint8_t *imgptr_end; 
   imgptr = (FAR uint8_t*) &__start_romfs;
   imgptr_end = (FAR uint8_t*) &__stop_romfs;
   len = imgptr_end - imgptr;
@@ -181,20 +214,21 @@ int nsh_main(int argc, char *argv[])
      exitval = 1;
    }
 #endif
-  if(len > 0){
-    printf("mounting romfs\n");
-    ret = romdisk_register(0, (FAR uint8_t *) imgptr, NSECTORS(len), SECTORSIZE);
+  if(len > 0){  
+    ret = romdisk_register(0, (FAR uint8_t *) imgptr, NSECTORS(len), SECTORSIZE);    
     if(ret < 0){
-      printf("romdisk failed to register\n");
-    }else{
-      ret = mount("/dev/ram0", "/mnt/romfs", "romfs", MS_RDONLY, NULL);
-      if(ret < 0){
-	printf("mount failed\n");
-      }
+      fprintf(stderr, "Romdisk did not register: %d\n", ret);    
     }
+    //    else{
+    //  ret = mount("/dev/ram0", "/mnt/romfs", "romfs", MS_RDONLY, NULL);
+    //  if(ret < 0){
+    //	fprintf(stderr, "Romdisk did not mount: %d\n", ret);
+	//printf("mount failed\n");	
+    //}
+    //}
   }
   /* If the serial console front end is selected, then run it on this thread */
-
+  fs_mounter();
 #ifdef CONFIG_NSH_CONSOLE
   ret = nsh_consolemain(0, NULL);
 

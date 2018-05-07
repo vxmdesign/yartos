@@ -190,7 +190,7 @@ int nsh_script(FAR struct nsh_vtbl_s *vtbl, FAR const char *cmd,
  *
  ****************************************************************************/
 
-#ifdef CONFIG_NSH_ROMFSETC
+#if defined(CONFIG_NSH_ROMFSETC) || defined(CONFIG_NSH_EXTINIT)
 int nsh_initscript(FAR struct nsh_vtbl_s *vtbl)
 {
   static bool initialized;
@@ -208,7 +208,14 @@ int nsh_initscript(FAR struct nsh_vtbl_s *vtbl)
 
   if (!already)
     {
+#ifdef CONFIG_NSH_ROMFSETC
       ret = nsh_script(vtbl, "init", NSH_INITPATH);
+#endif
+      
+#ifdef CONFIG_NSH_EXTINIT
+      ret = nsh_script(vtbl, "init", CONFIG_NSH_EXTINIT);
+#endif
+     
     }
 
   return ret;
